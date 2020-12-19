@@ -66,6 +66,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+            <version>4.2.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-infrastructure</artifactId>
+            <version>4.2.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-hadoop</artifactId>
             <version>${spring-data-hadoop.version}</version>
@@ -82,6 +94,25 @@
             <artifactId>spring-data-hadoop-spark</artifactId>
             <version>${spring-data-hadoop.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-hadoop-boot</artifactId>
+            <version>${spring-data-hadoop.version}</version>
+        </dependency>
+
+
 
 
         <!-- https://mvnrepository.com/artifact/org.ejml/ejml-core -->

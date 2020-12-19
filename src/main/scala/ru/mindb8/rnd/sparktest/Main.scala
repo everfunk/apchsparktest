@@ -24,7 +24,6 @@ object Main {
                 .config("spark.master", "local")
                 .getOrCreate()
 
-    spark.read.
 
     val lines = ctx.textFile("LICENSE", 1)
     val data = List(1, 2, 3, 4, 5)
