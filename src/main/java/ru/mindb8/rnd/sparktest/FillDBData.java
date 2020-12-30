@@ -25,12 +25,9 @@ public class FillDBData {
                                                         .doubles(n)
                                                         .mapToObj(x -> new MapSqlParameterSource()
                                                                             .addValue("ID", x));
-        val r = records.toArray();
-        System.out.println("********" + Arrays.toString(r));
-        val batch = SqlParameterSourceUtils.createBatch(r);
-        statement.executeBatch(batch);
-//        Iterators.partition(records.iterator(), batchSize).forEachRemaining(
-//                x -> statement.executeBatch(SqlParameterSourceUtils.createBatch(x))
-//        );
+
+        Iterators.partition(records.iterator(), batchSize).forEachRemaining(
+                x -> statement.executeBatch(SqlParameterSourceUtils.createBatch(x))
+        );
     }
 }
