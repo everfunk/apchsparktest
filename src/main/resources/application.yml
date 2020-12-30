@@ -5,6 +5,13 @@ spring:
   hadoop:
     fsUri: hdfs://borneo:8020
     resourceManagerHost: borneo
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
 example:
   inputLocalDir: data
   inputFileName: tweets.dat

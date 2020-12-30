@@ -1,5 +1,6 @@
 package ru.mindb8.rnd.sparktest;
 
+import lombok.val;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -8,10 +9,7 @@ import org.apache.spark.ml.classification.LogisticRegressionModel;
 import org.apache.spark.ml.param.ParamMap;
 import org.apache.spark.mllib.linalg.VectorUDT;
 import org.apache.spark.mllib.linalg.Vectors;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.RowFactory;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.*;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
@@ -22,16 +20,54 @@ import org.apache.spark.ml.PipelineStage;
 import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.feature.HashingTF;
 import org.apache.spark.ml.feature.Tokenizer;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.hadoop.batch.spark.SparkYarnTasklet;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import scala.Tuple2;
 
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class SparkMain {
     public static void main(String[] args) {
+        try (val context = new AnnotationConfigApplicationContext();){
+            context.register(SparkConfiguration.class);
+            context.scan("ru.mindb8.rnd.sparktest");
+            context.refresh();
+            context.registerShutdownHook();
+            val filler = context.getBean(FillDBData.class);
+            filler.fill(100);
+            val j = context.getBean(JdbcTemplate.class);
+            val q = j.query("SELECT ID, VAL FROM SAMPLE", new RowMapper<Pair<Long, BigDecimal>>() {
+                @Override
+                public Pair<Long, BigDecimal> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return new Pair<>(rs.getLong("ID"), rs.getBigDecimal("VAL"));
+                }
+            });
+            val spark = context.getBean(SparkSession.class);
+            val ds = spark.read()
+                .format("jdbc")
+                .option("driver", "org.h2.Driver")
+                .option("url", "jdbc:h2:mem:testdb")
+                .option("query", "SELECT ID, VAL FROM SAMPLE")
+                .option("user", "sa")
+                .option("password", "password")
+                .option("batchsize", 100)
+                .load();
+
+            val rdd = ds.rdd();
+            System.out.println("+++++++++" + rdd.count());
+        }
+    }
+
+    public static void main1(String[] args) {
         SparkYarnTasklet tasklet;
         System.setProperty("hadoop.home.dir", "/C:/###/hadoop/hadoop-2.8.3/");
         if (args.length < 1) {
