@@ -1,5 +1,8 @@
 package ru.mindb8.rnd.sparktest;
 
+import io.github.cgi.zabbix.api.DefaultZabbixApi;
+import io.github.cgi.zabbix.api.RequestBuilder;
+import io.github.cgi.zabbix.api.ZabbixApi;
 import lombok.val;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -37,6 +40,29 @@ import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class SparkMain {
     public static void main(String[] args) {
+//        val zabbixUrl = "http://xxx.xxx.xxx.xxx:443/zabbix/api_jsonrpc.php";
+//        val zabbixUser = "";
+//        val zabbixPass = "";
+//        ZabbixApi zabbixApi = new DefaultZabbixApi(zabbixUrl);
+//        zabbixApi.init();
+//        zabbixApi.login(zabbixUser, zabbixPass);
+//        zabbixApi.apiVersion();
+
+//        val request =
+//                RequestBuilder.newBuilder()
+//                .method("host.get")
+//                .paramEntry("filter", filter)
+//                .build();
+//
+//        request = RequestBuilder.newBuilder()
+//                .method("host.update")
+//                .paramEntry("hostid", hostid)
+//                .paramEntry("host", "localhost”)
+//                        .paramEntry("name", "localhost")
+//                        .build();
+//
+//        zabbixApi.call(request);
+
         try (val context = new AnnotationConfigApplicationContext();){
             context.register(SparkConfiguration.class);
             context.scan("ru.mindb8.rnd.sparktest");
